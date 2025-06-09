@@ -9,6 +9,9 @@ let user = "franco"; in
     ../../modules/shared
   ];
 
+  # Enable the skhd service at the system level
+  services.skhd.enable = true;
+
   environment.systemPackages = import ../../modules/darwin/packages.nix { inherit pkgs; };
   # This defines your user for the entire system, making it
   # visible to Home Manager and other modules.
