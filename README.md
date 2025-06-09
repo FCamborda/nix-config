@@ -1,0 +1,99 @@
+# Franco's Declarative macOS Configuration
+
+This repository contains the full declarative configuration for my macOS setup, managed by Nix and `nix-darwin`. The goal is a reproducible and version-controlled system.
+
+---
+
+## Directory Layout & Key Files
+
+The configuration is structured into several key directories.
+
+-   **/hosts**: Contains the main entry point for each specific machine.
+    -   `darwin/default.nix`: The main file for this Mac, which assembles all the necessary modules.
+-   **/modules**: Contains reusable pieces of the configuration.
+    -   `darwin/`: Modules with settings that *only* apply to macOS.
+        - `casks.nix`: A list of graphical `.app` files to install via Homebrew.
+        - `packages.nix`: A list of command-line tools for macOS.
+        - `system.nix`: macOS-specific system settings (`system.defaults`).
+    -   `shared/`: Modules with settings that apply to *all* systems.
+        - `home-manager.nix`: The main configuration for user-level programs like Git, Zsh, and Neovim.
+-   **/overlays**: Used for advanced package customizations (optional).
+
+## Bootstrap a New Mac
+
+To set up a new Mac from scratch:
+
+1.  **Install Nix:** Run the Determinate Systems Nix Installer script.
+    ```bash
+    curl --proto '=https' --tlsv1.2 -sSf -L [https://install.determinate.systems/nix](https://install.determinate.systems/nix) | sh -s -- install
+    ```
+
+2.  **Get a temporary Git shell:**
+    ```bash
+    nix-shell -p git
+    ```
+
+3.  **Clone this repository:**
+    ```bash
+    git clone [https://github.com/your-username/nixos-config.git](https://github.com/your-username/nixos-config.git) ~/nixos-config
+    cd ~/nixos-config
+    ```
+
+4.  **Perform the initial build and activation:**
+    ```bash
+    # First, build the configuration to create the './result' link
+    nix build '.#darwinConfigurations.aarch64-darwin.system'
+
+    # Second, run the activation script from the result with sudo
+    sudo ./result/sw/bin/darwin-rebuild switch --flake .#aarch64-darwin
+    ```
+
+## Daily Workflow: Applying Local Changes
+
+Any time I edit a `.nix` file to change a setting, add an application, or modify the configuration, I follow this process:
+
+1.  **Commit the changes (Best Practice):**
+    ```bash
+    git add .
+    git commit -m "feat: add new tool and tweak settings"
+    ```
+
+2.  **Activate the new configuration:**
+    ```bash
+    # We must use the full, explicit path to the configuration
+    sudo darwin-rebuild switch --flake .#aarch64-darwin
+    ```
+
+## Weekly Workflow: Updating Dependencies
+
+To update all underlying software (Nixpkgs, Home Manager, etc.) to their latest versions:
+
+1.  **Update the flake's lock file:**
+    ```bash
+    nix flake update
+    ```
+
+2.  **Apply the updates to the system:**
+    ```bash
+    # First, commit the new flake.lock
+    git add flake.lock
+    git commit -m "chore: update flakes"
+
+    # Then, switch to the new configuration using the explicit path
+    sudo darwin-rebuild switch --flake .#aarch64-darwin
+    ```
+
+## System Maintenance: Garbage Collection
+
+Nix stores every version of every package. Over time, this can use a lot of disk space. To clean up old, unused versions (generations) of your system:
+
+1.  **List current system generations:**
+    ```bash
+    darwin-rebuild --list-generations
+    ```
+2.  **Delete all old (not currently booted) generations:**
+    ```bash
+    nix-collect-garbage -d
+    ```
+
+---
