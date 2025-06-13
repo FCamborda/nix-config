@@ -13,6 +13,10 @@
     # Tell fzf to use fd for the Ctrl+T file finder for better performance
     FZF_CTRL_T_COMMAND = "fd --type f";
   };
+  home.sessionPath = [
+    "${config.home.homeDirectory}/bin"
+    "${config.home.homeDirectory}/.local/share/bin"
+  ];
 
   # Create skhd config file
   home.file.".config/skhd/skhdrc".text = ''
@@ -186,11 +190,6 @@
           . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
         fi
-
-        # Define variables for directories
-        export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
-        export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
-        export PATH=$HOME/.local/share/bin:$PATH
 
         # Remove history data we don't want to see
         export HISTIGNORE="pwd:ls:cd"
