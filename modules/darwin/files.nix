@@ -1,12 +1,12 @@
 {
-  user,
+  username,
   config,
   pkgs,
   ...
 }:
 
 let
-  xdg_dataHome = "${config.users.users.${user}.home}/.local/share";
+  xdg_dataHome = "${config.users.users.${username}.home}/.local/share";
 in
 {
 

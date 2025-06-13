@@ -42,7 +42,6 @@
       disko,
     }@inputs:
     let
-      user = "franco";
       linuxSystems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -108,17 +107,21 @@
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
         system:
         let
-          user = "franco";
+          username = "franco";
+          email = "f.camborda@outlook.com";
+          fullName = "Franco Camborda";
         in
         darwin.lib.darwinSystem {
           inherit system;
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit username email fullName;
+          };
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
               nix-homebrew = {
-                inherit user;
+                user = username;
                 enable = true;
                 taps = {
                   "homebrew/homebrew-core" = homebrew-core;
@@ -136,9 +139,17 @@
 
       nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (
         system:
+        # Define the username for THIS specific NixOS configuration here!
+        let
+          username = "franco";
+          email = "f.camborda@outlook.com";
+          fullName = "Franco Camborda";
+        in
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit username email fullName;
+          };
           modules = [
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
@@ -146,7 +157,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.${user} = import ./modules/nixos/home-manager.nix;
+                users.${username} = import ./modules/nixos/home-manager.nix;
               };
             }
             ./hosts/nixos

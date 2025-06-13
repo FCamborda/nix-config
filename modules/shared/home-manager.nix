@@ -1,14 +1,12 @@
 {
   pkgs,
   lib,
+  email,
+  fullName,
+  config,
   ...
 }:
 
-let
-  name = "Franco Camborda";
-  user = "franco";
-  email = "f.camborda@outlook.com";
-in
 {
   # Add this block to declaratively create the skhd config file
   home.file.".config/skhd/skhdrc".text = ''
@@ -86,7 +84,7 @@ in
     git = {
       enable = true;
       ignores = [ "*.swp" ];
-      userName = name;
+      userName = fullName;
       userEmail = email;
       lfs = {
         enable = true;
@@ -140,15 +138,13 @@ in
     ssh = {
       enable = true;
       includes = [
-        (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
-        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
+        "${config.home.homeDirectory}/.ssh/config_external"
       ];
       matchBlocks = {
         "github.com" = {
           identitiesOnly = true;
           identityFile = [
-            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/id_github")
-            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/id_github")
+            "${config.home.homeDirectory}/.ssh/id_github"
           ];
         };
       };
