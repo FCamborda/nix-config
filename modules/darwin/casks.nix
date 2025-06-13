@@ -2,7 +2,6 @@ _:
 
 [
   # Development Tools
-  "visual-studio-code"
   "orbstack"
   "wezterm"
 

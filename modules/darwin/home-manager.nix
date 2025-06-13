@@ -29,6 +29,7 @@ in
   # Enable home-manager
   home-manager = {
     useGlobalPkgs = true;
+    backupFileExtension = "hm-backup";
     extraSpecialArgs = { inherit username fullName email; };
     users.${username} =
       {
