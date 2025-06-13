@@ -62,6 +62,12 @@ To set up a new Mac from scratch:
             kubectl config use-context orbstack
             ```
 
+    * Configure 1Password:
+        1.  Launch the 1Password app from your Applications folder and sign in.
+        2.  Open **Settings** (`⌘,`) and navigate to the **Developer** tab.
+        3.  Check the box for **"Integrate with 1Password CLI"**.
+        4.  Verify the setup in a new terminal by running `op account list`. It should prompt for your fingerprint (Touch ID) and then show your account details.
+
 ## Daily Workflow: Applying Local Changes
 
 Any time I edit a `.nix` file to change a setting, add an application, or modify the configuration, I follow this process:
