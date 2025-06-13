@@ -1,8 +1,4 @@
-{ pkgs, ... }:
-
-let
-  user = "franco";
-in
+{ pkgs, username, ... }:
 
 {
   imports = [
@@ -17,13 +13,13 @@ in
   environment.systemPackages = import ../../modules/darwin/packages.nix { inherit pkgs; };
   # This defines your user for the entire system, making it
   # visible to Home Manager and other modules.
-  users.users.franco = {
-    name = "franco";
-    home = "/Users/franco";
+  users.users.${username} = {
+    name = username;
+    home = "/Users/${username}";
   };
   system = {
     checks.verifyNixPath = false;
     stateVersion = 4;
-    primaryUser = "franco";
+    primaryUser = username;
   };
 }

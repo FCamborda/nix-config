@@ -1,18 +1,20 @@
 {
   config,
   pkgs,
+  username,
+  fullName,
+  email,
   ...
 }:
 
 let
-  user = "franco";
   # Define the content of your file as a derivation
   myEmacsLauncher = pkgs.writeScript "emacs-launcher.command" ''
     #!/bin/sh
     emacsclient -c -n &
   '';
   sharedFiles = import ../shared/files.nix { inherit config pkgs; };
-  additionalFiles = import ./files.nix { inherit user config pkgs; };
+  additionalFiles = import ./files.nix { inherit username config pkgs; };
 in
 {
   imports = [
@@ -27,7 +29,8 @@ in
   # Enable home-manager
   home-manager = {
     useGlobalPkgs = true;
-    users.${user} =
+    extraSpecialArgs = { inherit username fullName email; };
+    users.${username} =
       {
         pkgs,
         config,
@@ -68,7 +71,7 @@ in
     { path = "/System/Applications/System Settings.app/"; }
 
     {
-      path = "${config.users.users.${user}.home}/Downloads";
+      path = "${config.users.users.${username}.home}/Downloads";
       section = "others";
       options = "--sort name --view grid --display stack";
     }
