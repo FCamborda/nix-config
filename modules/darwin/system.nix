@@ -5,7 +5,7 @@
 
 {
   security.pam.services.sudo_local.touchIdAuth = true;
-  # All system-wide settings for nix-darwin go in here.
+
   system = {
     defaults = {
       NSGlobalDomain = {
@@ -32,7 +32,7 @@
 
       trackpad = {
         Clicking = true;
-        TrackpadThreeFingerDrag = true;
+        TrackpadThreeFingerDrag = false;
       };
     };
 
