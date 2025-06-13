@@ -8,7 +8,13 @@
 }:
 
 {
-  # Add this block to declaratively create the skhd config file
+  # Env. variables
+  home.sessionVariables = {
+    # Tell fzf to use fd for the Ctrl+T file finder for better performance
+    FZF_CTRL_T_COMMAND = "fd --type f";
+  };
+
+  # Create skhd config file
   home.file.".config/skhd/skhdrc".text = ''
     #--------------------------------------------------
     # App Launchers
@@ -31,6 +37,10 @@
     cmd + ctrl + shift - 3 : /usr/sbin/screencapture -cx
   '';
   programs = {
+    fzf = {
+      enable = true;
+    };
+
     # Shared shell configuration
     zsh = {
       enable = true;
