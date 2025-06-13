@@ -38,6 +38,7 @@
       shellAliases = {
         ll = "ls -l";
         "nix-switch" = "sudo darwin-rebuild switch --flake .#aarch64-darwin";
+        code = "codium";
       };
       plugins = [
         {
@@ -109,10 +110,9 @@
       vimAlias = true;
       extraConfig = ''
         " General Settings
+        set clipboard=unnamed,unnamedplus
         set number
-        set relativenumber
 
-        set cursorline
         set scrolloff=3
         set hidden
 
@@ -126,21 +126,45 @@
         set shiftwidth=4
         set softtabstop=4
         set expandtab
+
+        if exists('$VSCODE_NEOVIM')
+
+        else
+          set relativenumber
+          set cursorline
+
+        endif
       '';
     };
+
     vscode = {
       enable = true;
+      package = pkgs.vscodium;
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
           jnoortheen.nix-ide
+          asvetliakov.vscode-neovim
         ];
 
-        # This is the merged settings block
         userSettings = {
-          # --- Settings from your existing config ---
+          # Editor
+          "editor.lineNumbers" = "relative";
+          "editor.formatOnSave" = true;
+          "editor.minimap.enabled" = false;
+          "editor.rulers" = [
+            80
+            120
+          ];
+          "editor.renderWhitespace" = "all";
+          "editor.renderLineHighlight" = "all";
+          # Misc
+          "workbench.editor.enablePreview" = false;
+          "files.trimTrailingWhitespace" = true;
+          "files.insertFinalNewline" = true;
+          "terminal.integrated.fontFamily" = "MesloLGS NF";
+          # Nix
           "nix.enableLanguageServer" = true;
           "nix.serverPath" = "nil";
-          "editor.formatOnSave" = true;
           "nix.serverSettings" = {
             "nil" = {
               "formatting" = {
@@ -148,21 +172,10 @@
               };
             };
           };
-
-          # --- Settings from my previous suggestion ---
-          # This disables the scrollbar "minimap" as you requested
-          "editor.minimap.enabled" = false;
-
-          # These are other helpful defaults you can keep or remove
-          "editor.rulers" = [
-            80
-            120
-          ];
-          "editor.renderWhitespace" = "all";
-          "workbench.editor.enablePreview" = false;
-          "files.trimTrailingWhitespace" = true;
-          "files.insertFinalNewline" = true;
-          "terminal.integrated.fontFamily" = "MesloLGS NF";
+          # Neovim
+          "extensions.experimental.affinity" = {
+            "asvetliakov.vscode-neovim" = 1;
+          };
         };
       };
     };
