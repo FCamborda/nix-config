@@ -41,57 +41,6 @@
       enable = true;
     };
 
-    # Shared shell configuration
-    zsh = {
-      enable = true;
-      autocd = false;
-      shellAliases = {
-        ll = "ls -l";
-        "nix-switch" = "sudo darwin-rebuild switch --flake .#aarch64-darwin";
-        code = "codium";
-      };
-      plugins = [
-        {
-          name = "powerlevel10k";
-          src = pkgs.zsh-powerlevel10k;
-          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-        }
-        {
-          name = "powerlevel10k-config";
-          src = lib.cleanSource ./config;
-          file = "p10k.zsh";
-        }
-      ];
-
-      initContent = lib.mkBefore ''
-        if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-        fi
-
-        # Define variables for directories
-        export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
-        export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
-        export PATH=$HOME/.local/share/bin:$PATH
-
-        # Remove history data we don't want to see
-        export HISTIGNORE="pwd:ls:cd"
-
-        # nix shortcuts
-        shell() {
-            nix-shell '<nixpkgs>' -A "$1"
-        }
-
-        # Use difftastic, syntax-aware diffing
-        alias diff=difft
-
-        # Always color ls and group directories
-        alias ls='ls --color=auto'
-
-        eval "$(zoxide init zsh --cmd cd)"
-      '';
-    };
-
     git = {
       enable = true;
       ignores = [ "*.swp" ];
@@ -147,6 +96,21 @@
       '';
     };
 
+    ssh = {
+      enable = true;
+      includes = [
+        "${config.home.homeDirectory}/.ssh/config_external"
+      ];
+      matchBlocks = {
+        "github.com" = {
+          identitiesOnly = true;
+          identityFile = [
+            "${config.home.homeDirectory}/.ssh/id_github"
+          ];
+        };
+      };
+    };
+
     vscode = {
       enable = true;
       package = pkgs.vscodium;
@@ -195,20 +159,55 @@
       enableZshIntegration = true;
       enableBashIntegration = true;
     };
-
-    ssh = {
+    # Shared shell configuration
+    zsh = {
       enable = true;
-      includes = [
-        "${config.home.homeDirectory}/.ssh/config_external"
-      ];
-      matchBlocks = {
-        "github.com" = {
-          identitiesOnly = true;
-          identityFile = [
-            "${config.home.homeDirectory}/.ssh/id_github"
-          ];
-        };
+      autocd = false;
+      shellAliases = {
+        ll = "ls -l";
+        "nix-switch" = "sudo darwin-rebuild switch --flake .#aarch64-darwin";
+        code = "codium";
       };
+      plugins = [
+        {
+          name = "powerlevel10k";
+          src = pkgs.zsh-powerlevel10k;
+          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+        }
+        {
+          name = "powerlevel10k-config";
+          src = lib.cleanSource ./config;
+          file = "p10k.zsh";
+        }
+      ];
+
+      initContent = lib.mkBefore ''
+        if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+        fi
+
+        # Define variables for directories
+        export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
+        export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
+        export PATH=$HOME/.local/share/bin:$PATH
+
+        # Remove history data we don't want to see
+        export HISTIGNORE="pwd:ls:cd"
+
+        # nix shortcuts
+        shell() {
+            nix-shell '<nixpkgs>' -A "$1"
+        }
+
+        # Use difftastic, syntax-aware diffing
+        alias diff=difft
+
+        # Always color ls and group directories
+        alias ls='ls --color=auto'
+
+        eval "$(zoxide init zsh --cmd cd)"
+      '';
     };
   };
 }
