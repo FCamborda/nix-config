@@ -128,6 +128,44 @@
         set expandtab
       '';
     };
+    vscode = {
+      enable = true;
+      profiles.default = {
+        extensions = with pkgs.vscode-extensions; [
+          jnoortheen.nix-ide
+        ];
+
+        # This is the merged settings block
+        userSettings = {
+          # --- Settings from your existing config ---
+          "nix.enableLanguageServer" = true;
+          "nix.serverPath" = "nil";
+          "editor.formatOnSave" = true;
+          "nix.serverSettings" = {
+            "nil" = {
+              "formatting" = {
+                "command" = [ "nixfmt" ];
+              };
+            };
+          };
+
+          # --- Settings from my previous suggestion ---
+          # This disables the scrollbar "minimap" as you requested
+          "editor.minimap.enabled" = false;
+
+          # These are other helpful defaults you can keep or remove
+          "editor.rulers" = [
+            80
+            120
+          ];
+          "editor.renderWhitespace" = "all";
+          "workbench.editor.enablePreview" = false;
+          "files.trimTrailingWhitespace" = true;
+          "files.insertFinalNewline" = true;
+          "terminal.integrated.fontFamily" = "MesloLGS NF";
+        };
+      };
+    };
 
     zoxide = {
       enable = true;
