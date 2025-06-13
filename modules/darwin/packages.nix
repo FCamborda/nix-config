@@ -6,4 +6,6 @@ shared-packages ++ [
   dockutil
   emacs-unstable
   skhd
+  nil
+  nixfmt-rfc-style
 ]
