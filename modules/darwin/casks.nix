@@ -20,4 +20,7 @@ _:
 
   # Browsers
   "google-chrome"
+
+  # Password manager
+  "1password"
 ]

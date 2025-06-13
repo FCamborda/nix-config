@@ -11,4 +11,5 @@ shared-packages
   skhd
   nil
   nixfmt-rfc-style
+  _1password-cli
 ]
