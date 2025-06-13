@@ -1,5 +1,7 @@
 # In ~/nixos-config/modules/darwin/system.nix
-{ config, lib, pkgs, ... }:
+{
+  ...
+}:
 
 {
   # All system-wide settings for nix-darwin go in here.

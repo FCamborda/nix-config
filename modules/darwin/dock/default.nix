@@ -1,11 +1,14 @@
-{ config, pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 # Original source: https://gist.github.com/antifuchs/10138c4d838a63c0a05e725ccd7bccdd
 
 with lib;
 let
-  cfg = config.local.dock;
-  inherit (pkgs) stdenv dockutil;
+  inherit (pkgs) stdenv;
 in
 {
   options = {
@@ -15,10 +18,11 @@ in
       example = false;
     };
 
-    local.dock.entries = mkOption
-      {
-        description = "Entries on the Dock";
-        type = with types; listOf (submodule {
+    local.dock.entries = mkOption {
+      description = "Entries on the Dock";
+      type =
+        with types;
+        listOf (submodule {
           options = {
             path = lib.mkOption { type = str; };
             section = lib.mkOption {
@@ -31,7 +35,7 @@ in
             };
           };
         });
-        readOnly = true;
-      };
+      readOnly = true;
+    };
   };
 }
