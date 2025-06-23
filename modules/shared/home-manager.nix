@@ -8,9 +8,7 @@
 }:
 
 {
-  # Env. variables
   home.sessionVariables = {
-    # Tell fzf to use fd for the Ctrl+T file finder for better performance
     FZF_CTRL_T_COMMAND = "fd --type f";
   };
   home.sessionPath = [
@@ -40,6 +38,10 @@
     # Capture the entire screen directly to the clipboard (without sound)
     cmd + ctrl + shift - 3 : /usr/sbin/screencapture -cx
   '';
+
+  # Create empty directory sockets/
+  home.file.".ssh/sockets/.keep".text = "";
+
   programs = {
     fzf = {
       enable = true;
@@ -102,17 +104,20 @@
 
     ssh = {
       enable = true;
-      includes = [
-        "${config.home.homeDirectory}/.ssh/config_external"
-      ];
-      matchBlocks = {
-        "github.com" = {
-          identitiesOnly = true;
-          identityFile = [
-            "${config.home.homeDirectory}/.ssh/id_github"
-          ];
-        };
-      };
+      # This will correctly populate the module's own hardcoded "Host *" block.
+      # Note the values are booleans, strings, and integers as required by the module.
+      forwardAgent = false;
+      serverAliveInterval = 60;
+      controlMaster = "auto";
+      controlPath = "~/.ssh/sockets/%r@%h-%p";
+      controlPersist = "10m";
+
+      # Part 2: Use extraConfig to inject the settings that are NOT available
+      # as top-level options, like the essential "IdentitiesOnly".
+      extraConfig = ''
+        IdentitiesOnly no
+        IdentityAgent /Users/franco/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+      '';
     };
 
     vscode = {
