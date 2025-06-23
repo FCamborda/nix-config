@@ -65,7 +65,6 @@ in
   # Replace your local.dock.entries with this one
   local.dock.entries = [
     { path = "/Applications/WezTerm.app/"; }
-    { path = "/Applications/Visual Studio Code.app/"; }
     { path = "/Applications/OrbStack.app/"; }
     { path = "/Applications/Google Chrome.app/"; }
 
