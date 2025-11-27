@@ -43,30 +43,89 @@
   home.file.".ssh/sockets/.keep".text = "";
 
   programs = {
+    zed-editor = {
+      enable = true;
+      extensions = [
+        "nix"
+        "toml"
+        "elixir"
+      ];
+      userSettings = {
+        # Editor Settings
+        show_minimap = false;
+        show_line_column_guides = [80 120];
+        show_whitespaces = "all";
+        line_glowing = true;
+
+        # Tab/File Settings
+        preview_tabs = false;
+        remove_trailing_whitespace_on_save = true;
+        ensure_final_newline_on_save = true;
+        vim_mode = true;
+        agent = {
+          default_profile = "ask";
+          default_model = {
+            model = "gemini-2.5-flash";
+            provider = "google";
+          };
+        };
+        auto_install_extensions = {
+          elixir = true;
+          nix = false;
+          toml = true;
+          python = false;
+        };
+        languages = {
+          Python = {
+            language_servers = [ "basedpyright" ];
+            formatter = {
+              external = {
+                command = "ruff";
+                arguments = [
+                  "format"
+                  "--stdin-filename"
+                  "{buffer_path}"
+                ];
+              };
+            };
+            format_on_save = "on";
+          };
+        };
+        lsp = {
+          nil = {
+            binary = {
+              path = "nil";
+            };
+          };
+        };
+      };
+    };
     fzf = {
       enable = true;
+      enableZshIntegration = true;
     };
 
     git = {
       enable = true;
       ignores = [ "*.swp" ];
-      userName = fullName;
-      userEmail = email;
+      settings = {
+        aliases = {
+          st = "status";
+          overwrite = "commit --no-edit --amend";
+          init.defaultBranch = "main";
+          pull.rebase = true;
+          core = {
+            editor = "vim";
+            autocrlf = "input";
+          };
+          push.autosetupremote = true;
+          rebase.autoStash = true;
+          userName = fullName;
+          userEmail = email;
+        };
+      };
       lfs = {
         enable = true;
-      };
-      extraConfig = {
-        init.defaultBranch = "main";
-        core = {
-          editor = "vim";
-          autocrlf = "input";
-        };
-        pull.rebase = true;
-        rebase.autoStash = true;
-      };
-      aliases = {
-        st = "status";
-        overwrite = "commit --no-edit --amend";
       };
     };
 
@@ -174,8 +233,12 @@
       autocd = false;
       shellAliases = {
         ll = "ls -l";
+        ls = "ls --color=auto";
+        diff = "difft";
         "nix-switch" = "sudo darwin-rebuild switch --flake .#aarch64-darwin";
+        "dns-flush" = "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder";
         code = "codium";
+        gmc = "gemini-cli-secure";
       };
       plugins = [
         {
@@ -203,12 +266,6 @@
         shell() {
             nix-shell '<nixpkgs>' -A "$1"
         }
-
-        # Use difftastic, syntax-aware diffing
-        alias diff=difft
-
-        # Always color ls and group directories
-        alias ls='ls --color=auto'
 
         eval "$(zoxide init zsh --cmd cd)"
       '';

@@ -7,9 +7,7 @@ in
 shared-packages
 ++ [
   dockutil
-  emacs-unstable
   skhd
   nil
   nixfmt-rfc-style
-  _1password-cli
 ]
