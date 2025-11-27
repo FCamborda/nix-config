@@ -3,8 +3,6 @@
   # This file's only job is to list all the other modules in this directory.
 
   imports = [
-    # Import the module for nixpkgs settings and overlays
-    ./nixpkgs-config.nix
 
     # Import the module for Nix settings (garbage collection, etc.)
     ./nix.nix
