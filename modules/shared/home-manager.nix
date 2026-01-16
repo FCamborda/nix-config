@@ -52,28 +52,20 @@
       ];
       userSettings = {
         # Editor Settings
-        show_minimap = false;
-        show_line_column_guides = [80 120];
-        show_whitespaces = "all";
-        line_glowing = true;
+        vim_mode = true;
+        relative_line_numbers = true;
 
         # Tab/File Settings
-        preview_tabs = false;
+        preview_tabs.enabled = false;
         remove_trailing_whitespace_on_save = true;
         ensure_final_newline_on_save = true;
-        vim_mode = true;
+        # LLM
         agent = {
           default_profile = "ask";
           default_model = {
             model = "gemini-2.5-flash";
             provider = "google";
           };
-        };
-        auto_install_extensions = {
-          elixir = true;
-          nix = false;
-          toml = true;
-          python = false;
         };
         languages = {
           Python = {
@@ -90,11 +82,15 @@
             };
             format_on_save = "on";
           };
-        };
-        lsp = {
-          nil = {
-            binary = {
-              path = "nil";
+          Nix = {
+            language_servers = [
+              "nil"
+              "!nixd"
+            ];
+            formatter = {
+              external = {
+                command = "nixfmt";
+              };
             };
           };
         };
@@ -151,13 +147,8 @@
         set softtabstop=4
         set expandtab
 
-        if exists('$VSCODE_NEOVIM')
-
-        else
-          set relativenumber
-          set cursorline
-
-        endif
+        set relativenumber
+        set cursorline
       '';
     };
 
@@ -179,66 +170,26 @@
       '';
     };
 
-    vscode = {
-      enable = true;
-      package = pkgs.vscodium;
-      profiles.default = {
-        extensions = with pkgs.vscode-extensions; [
-          jnoortheen.nix-ide
-          asvetliakov.vscode-neovim
-        ];
-
-        userSettings = {
-          # Editor
-          "editor.lineNumbers" = "relative";
-          "editor.formatOnSave" = true;
-          "editor.minimap.enabled" = false;
-          "editor.rulers" = [
-            80
-            120
-          ];
-          "editor.renderWhitespace" = "all";
-          "editor.renderLineHighlight" = "all";
-          # Misc
-          "workbench.editor.enablePreview" = false;
-          "files.trimTrailingWhitespace" = true;
-          "files.insertFinalNewline" = true;
-          "terminal.integrated.fontFamily" = "MesloLGS NF";
-          # Nix
-          "nix.enableLanguageServer" = true;
-          "nix.serverPath" = "nil";
-          "nix.serverSettings" = {
-            "nil" = {
-              "formatting" = {
-                "command" = [ "nixfmt" ];
-              };
-            };
-          };
-          # Neovim
-          "extensions.experimental.affinity" = {
-            "asvetliakov.vscode-neovim" = 1;
-          };
-        };
-      };
-    };
-
     zoxide = {
       enable = true;
       enableZshIntegration = true;
       enableBashIntegration = true;
     };
+
     # Shared shell configuration
     zsh = {
       enable = true;
       autocd = false;
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
       shellAliases = {
-        ll = "ls -l";
-        ls = "ls --color=auto";
+        ls = "eza";
+        ll = "eza -l";
+        la = "eza -la";
+        tree = "eza --tree";
         diff = "difft";
         "nix-switch" = "sudo darwin-rebuild switch --flake .#aarch64-darwin";
         "dns-flush" = "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder";
-        code = "codium";
-        gmc = "gemini-cli-secure";
       };
       plugins = [
         {
