@@ -9,8 +9,8 @@ with pkgs;
   fd
   jq
   ripgrep
-  tree
   wget
+  eza
 
   gemini-cli
 
@@ -31,4 +31,5 @@ with pkgs;
   kubernetes-helm
   # Nix LSP
   nil
+  nixfmt-rfc-style
 ]

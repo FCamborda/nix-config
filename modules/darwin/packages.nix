@@ -8,6 +8,4 @@ shared-packages
 ++ [
   dockutil
   skhd
-  nil
-  nixfmt-rfc-style
 ]
