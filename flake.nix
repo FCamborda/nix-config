@@ -1,167 +1,97 @@
 {
-  description = "Starter Configuration for MacOS and NixOS";
+  description = "Nix flake for macOS (nix-darwin) and NixOS systems";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager";
-    darwin = {
-      url = "github:LnL7/nix-darwin/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";
-    };
-    homebrew-bundle = {
-      url = "github:homebrew/homebrew-bundle";
-      flake = false;
-    };
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-    disko = {
-      url = "github:nix-community/disko";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05";
+    darwin.url = "github:LnL7/nix-darwin";
+    home-manager = {
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs =
     {
-      self,
-      darwin,
-      nix-homebrew,
-      homebrew-bundle,
-      homebrew-core,
-      homebrew-cask,
-      home-manager,
       nixpkgs,
-      disko,
-    }@inputs:
+      darwin,
+      home-manager,
+      ...
+    }:
     let
-      linuxSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      darwinSystems = [
-        "aarch64-darwin"
-        "x86_64-darwin"
-      ];
-      forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
-      devShell =
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default =
-            with pkgs;
-            mkShell {
-              nativeBuildInputs = with pkgs; [
-                bashInteractive
-                git
-              ];
-              shellHook = ''
-                export EDITOR=vim
-              '';
-            };
-        };
-      mkApp = scriptName: system: {
-        type = "app";
-        program = "${
-          (nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-            #!/usr/bin/env bash
-            PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-            echo "Running ${scriptName} for ${system}"
-            exec ${self}/apps/${system}/${scriptName}
-          '')
-        }/bin/${scriptName}";
+      # ============================================================
+      # USER CONFIGURATION
+      # New developers: update these values for your own setup
+      # ============================================================
+      userConfig = {
+        username = "franco";
+        fullName = "Franco Camborda";
+        email = "44851835+FCamborda@users.noreply.github.com";
       };
-      mkLinuxApps = system: {
-        "apply" = mkApp "apply" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "install" = mkApp "install" system;
-      };
-      mkDarwinApps = system: {
-        "apply" = mkApp "apply" system;
-        "build" = mkApp "build" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "rollback" = mkApp "rollback" system;
-      };
-    in
-    {
-      devShells = forAllSystems devShell;
-      apps =
-        nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
-        system:
-        let
-          username = "franco";
-          email = "44851835+FCamborda@users.noreply.github.com";
-          fullName = "Franco Camborda";
-        in
+      # Helper function to create a darwin system
+      mkDarwin =
+        {
+          system ? "aarch64-darwin",
+          hostname,
+          extraModules ? [ ],
+        }:
         darwin.lib.darwinSystem {
           inherit system;
-          specialArgs = inputs // {
-            inherit username email fullName;
+          specialArgs = userConfig // {
+            inherit hostname;
           };
           modules = [
-            home-manager.darwinModules.home-manager
-            nix-homebrew.darwinModules.nix-homebrew
-            {
-              nix-homebrew = {
-                user = username;
-                enable = true;
-                taps = {
-                  "homebrew/homebrew-core" = homebrew-core;
-                  "homebrew/homebrew-cask" = homebrew-cask;
-                  "homebrew/homebrew-bundle" = homebrew-bundle;
-                };
-                mutableTaps = false;
-                autoMigrate = true;
-              };
-            }
             ./hosts/darwin
-          ];
-        }
-      );
+            home-manager.darwinModules.home-manager
+          ]
+          ++ extraModules;
+        };
 
-      nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (
-        system:
-        # Define the username for THIS specific NixOS configuration here!
-        let
-          username = "franco";
-          email = "44851835+FCamborda@users.noreply.github.com";
-          fullName = "Franco Camborda";
-        in
+      # Helper function to create a NixOS system
+      mkNixOS =
+        {
+          system ? "x86_64-linux",
+          hostname,
+          hostPath,
+          extraModules ? [ ],
+        }:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = inputs // {
-            inherit username email fullName;
+          specialArgs = userConfig // {
+            inherit hostname;
           };
           modules = [
-            disko.nixosModules.disko
+            hostPath
             home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${username} = import ./modules/nixos/home-manager.nix;
-              };
-            }
-            ./hosts/nixos
-          ];
-        }
-      );
+          ]
+          ++ extraModules;
+        };
+    in
+    {
+      # ============================================================
+      # macOS CONFIGURATIONS
+      # Apply with: darwin-rebuild switch --flake .#<hostname>
+      # ============================================================
+      darwinConfigurations."infrastructure-macbook" = mkDarwin {
+        hostname = "infrastructure-macbook";
+      };
+
+      # ============================================================
+      # NixOS CONFIGURATIONS - Desktop
+      # Apply with: sudo nixos-rebuild switch --flake .#<hostname>
+      # ============================================================
+      nixosConfigurations."nixos-workstation" = mkNixOS {
+        hostname = "nixos-workstation";
+        hostPath = ./hosts/nixos;
+      };
+
+      # ============================================================
+      # NixOS CONFIGURATIONS - Servers / CI
+      # Headless systems without desktop environment
+      # ============================================================
+      nixosConfigurations."nixos-ci" = mkNixOS {
+        hostname = "nixos-ci";
+        hostPath = ./hosts/nixos-ci;
+      };
     };
 }

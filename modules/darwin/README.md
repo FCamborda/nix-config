@@ -1,11 +1,10 @@
+# macOS Modules
 
-## Layout
-```
-.
-├── dock               # MacOS dock configuration
-├── casks.nix          # List of homebrew casks
-├── default.nix        # Defines module, system-level config
-├── files.nix          # Non-Nix, static configuration files (now immutable!)
-├── home-manager.nix   # Defines user programs
-├── packages.nix       # List of packages to install for MacOS
-```
+This directory contains Nix modules that are specific to macOS. These modules provide configurations for various aspects of the system, such as base system settings, Homebrew, and system-wide configurations.
+
+## Modules
+
+*   `base.nix`: Defines base system settings for macOS.
+*   `brew.nix`: Configures Homebrew packages.
+*   `home-manager.nix`: Provides Home Manager configurations.
+*   `system.nix`: Sets system-wide settings.
