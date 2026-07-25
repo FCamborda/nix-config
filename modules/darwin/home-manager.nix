@@ -103,6 +103,7 @@
           ../core/packages.nix
           ../interactive/home-manager.nix
           ../interactive/packages.nix
+          ./telegram-bridge.nix
         ];
       };
   };
