@@ -17,6 +17,7 @@
 
     # Version control
     git
+    glab
     openssh
 
     # K8s tooling (useful for CI/CD deployments)
