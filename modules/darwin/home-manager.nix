@@ -104,6 +104,7 @@
           ../interactive/home-manager.nix
           ../interactive/packages.nix
           ./telegram-bridge.nix
+          ./disk-cleanup.nix
         ];
       };
   };

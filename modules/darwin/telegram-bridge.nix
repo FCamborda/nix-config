@@ -14,6 +14,20 @@ let
     export TELEGRAM_BOT_USERNAME=$(security find-generic-password -s "telegram-bridge-mac-username" -a "$USER" -w)
     export ALLOWED_USERS=$(security find-generic-password -s "telegram-bridge-mac-allowed-users" -a "$USER" -w)
     export APPROVED_DIRECTORY="${config.home.homeDirectory}/git"
+    # Project Threads: one Telegram forum topic per repo (see
+    # ~/.local/share/claude-code-telegram/config/projects.yaml), each with
+    # its own concurrent session — the fix for "one slow linear chat" that
+    # doesn't require a third-party orchestrator.
+    export ENABLE_PROJECT_THREADS="true"
+    export PROJECT_THREADS_MODE="private"
+    export PROJECTS_CONFIG_PATH="${bridgeDir}/config/projects.yaml"
+    # launchd agents start with CWD=/ by default, and the bot's DATABASE_URL
+    # default (sqlite:///data/bot.db) is a *relative* path — under CWD=/ that
+    # resolves to /data/bot.db, which is on macOS's read-only system volume.
+    # Pin both explicitly rather than relying on CWD.
+    export DATABASE_URL="sqlite:///${bridgeDir}/data/bot.db"
+    mkdir -p "${bridgeDir}/data"
+    cd ${bridgeDir}
     exec ${bridgeDir}/.venv/bin/claude-telegram-bot
   '';
 in
