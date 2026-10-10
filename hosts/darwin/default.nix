@@ -6,6 +6,7 @@
     ../../modules/darwin/brew.nix
     ../../modules/darwin/system.nix
     ../../modules/darwin/home-manager.nix
+    ../../modules/darwin/nix-gc.nix
   ];
   nixpkgs.config.allowUnfree = true;
 

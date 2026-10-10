@@ -1,15 +1,14 @@
 { config, pkgs, ... }:
 
 let
-  # --delete-older-than (not -d) so a rollback window survives automated runs.
   # docker prune only touches unused images/containers, so it's safe to run
-  # unattended even while OrbStack has active containers.
+  # unattended even while OrbStack has active containers. Nix GC lives in the
+  # root nix-gc daemon (nix-gc.nix) so it can also prune the system profile.
   cleanupScript = pkgs.writeShellScriptBin "disk-cleanup" ''
     set -uo pipefail
     if /usr/local/bin/docker info >/dev/null 2>&1; then
       /usr/local/bin/docker system prune -af
     fi
-    ${pkgs.nix}/bin/nix-collect-garbage --delete-older-than 30d
   '';
 in
 {
