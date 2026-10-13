@@ -42,9 +42,10 @@ in
   launchd.daemons.nix-gc = {
     serviceConfig = {
       ProgramArguments = [ "${gcScript}/bin/nix-gc" ];
+      # Daily: worktree dev shells/builds churn ~10 GB of garbage per day, so a
+      # weekly run let the disk fill up between runs (2026-10-13).
       StartCalendarInterval = [
         {
-          Weekday = 0;
           Hour = 11;
           Minute = 0;
         }
