@@ -34,6 +34,8 @@ let
     prune /nix/var/nix/profiles/per-user/root/profile
     prune /Users/${username}/.local/state/nix/profiles/home-manager
     prune /Users/${username}/.local/state/nix/profiles/profile
+    # The dev shell kept by the devshell-root agent (devshell-roots.nix).
+    prune /Users/${username}/.local/state/nix/profiles/devshell
 
     ${pkgs.nix}/bin/nix-store --gc
   '';

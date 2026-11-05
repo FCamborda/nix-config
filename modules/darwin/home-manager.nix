@@ -105,6 +105,7 @@
           ../interactive/packages.nix
           ./telegram-bridge.nix
           ./disk-cleanup.nix
+          ./devshell-roots.nix
         ];
       };
   };
