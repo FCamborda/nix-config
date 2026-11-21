@@ -48,7 +48,12 @@
       userConfig = {
         username = "franco";
         fullName = "Franco Camborda";
-        email = "44851835+FCamborda@users.noreply.github.com";
+        # The default commit author address: GitLab's noreply address for the account, so commits
+        # are attributed to the GitLab user without putting a real address in history.
+        email = "39990779-fcamborda1@users.noreply.gitlab.com";
+        # The commit author address in repositories with a GitHub remote: GitHub's noreply
+        # address, which GitHub attributes to the account.
+        githubEmail = "44851835+FCamborda@users.noreply.github.com";
       };
 
       # Helper function to create a darwin system

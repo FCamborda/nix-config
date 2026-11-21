@@ -2,6 +2,7 @@
   config,
   fullName,
   email,
+  githubEmail,
   ...
 }:
 
@@ -23,6 +24,16 @@
     enable = true;
     userName = fullName;
     userEmail = email;
+    # Repositories with a GitHub remote use githubEmail instead (git 2.36+ hasconfig): GitHub and
+    # GitLab each attribute a commit only to an address the account there knows.
+    includes = map (url: {
+      condition = "hasconfig:remote.*.url:${url}";
+      contents.user.email = githubEmail;
+    }) [
+      # `**` spans directories only next to a `/`; after the scp-style `:` it would stop at one.
+      "git@github.com:*/**"
+      "https://github.com/**"
+    ];
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = true;

@@ -2,6 +2,7 @@
   username,
   fullName,
   email,
+  githubEmail,
   hostname,
   ...
 }:
@@ -11,7 +12,7 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit username fullName email; };
+    extraSpecialArgs = { inherit username fullName email githubEmail; };
     users.${username} =
       {
         pkgs,
