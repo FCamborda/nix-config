@@ -1,1 +1,3 @@
 result
+# Claude Code permissions for this machine: local commands and hosts, never committed.
+.claude/settings.local.json
