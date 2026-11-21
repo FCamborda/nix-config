@@ -1,9 +1,9 @@
 { config, ... }:
 
 let
-  # The daily nix-gc (nix-gc.nix, 11:00) deleted the dev shell: nothing rooted it, so every
-  # new applications worktree downloaded rustc, LLVM and the rest again, for hours on a slow
-  # connection (2026-11-04/05). This agent builds the dev shell of the repository's origin/main
+  # The daily nix-gc (nix-gc.nix, 11:00) deleted the main work repository's dev shell: nothing
+  # rooted it, so every new worktree downloaded rustc, LLVM and the rest again, for hours on a slow
+  # connection. This agent builds the dev shell of the repository's origin/main
   # into a profile, which is a GC root, half an hour before the GC. nix print-dev-env builds
   # what `nix develop` would without running the shell's hook. The checkout is shallow, so the
   # flake is read with shallow=1. nix-gc prunes this profile's old generations like the others.

@@ -117,7 +117,7 @@
         # SSH into a my-lab host via OpenBao cert (re-login if token expired)
         mylab-ssh() {
             local pubkey="''${2:-$HOME/.ssh/id_ed25519.pub}"
-            # Drop any stale host key first — fleet VMs are reprovisioned often (new
+            # Drop any stale host key first — VMs are reprovisioned often (new
             # host key, reused IPs), which otherwise hard-fails the connection with
             # "REMOTE HOST IDENTIFICATION HAS CHANGED". accept-new then trusts the
             # fresh key without an interactive prompt.

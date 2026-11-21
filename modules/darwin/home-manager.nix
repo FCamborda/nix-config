@@ -33,30 +33,9 @@
           controlMaster = "auto";
           controlPath = "~/.ssh/sockets/%r@%h-%p";
           controlPersist = "10m";
-          # Fleet shortcuts: `ssh infra`, `ssh bao`, `ssh k3s` — the VMs sit
-          # on the host's private bridge and are only reachable by
-          # jumping through it (see the infra repo's README).
-          matchBlocks = {
-            "infra" = {
-              hostname = "host.example.net";
-              user = "franco";
-            };
-            "bao" = {
-              hostname = "192.0.2.1";
-              user = "franco";
-              proxyJump = "infra";
-            };
-            "k3s" = {
-              hostname = "192.0.2.1";
-              user = "franco";
-              proxyJump = "infra";
-            };
-            "s3 seaweed" = {
-              hostname = "192.0.2.1";
-              user = "franco";
-              proxyJump = "infra";
-            };
-          };
+          # Host shortcuts that name private infrastructure live outside this public repository:
+          # drop an ssh config file into ~/.ssh/config.d/ (e.g. one kept with that infrastructure).
+          includes = [ "config.d/*" ];
           extraConfig = ''
             IdentitiesOnly no
             IdentityAgent ${config.home.homeDirectory}/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
@@ -65,6 +44,8 @@
 
         # Create empty directory for SSH control sockets
         home.file.".ssh/sockets/.keep".text = "";
+        # And the directory the ssh config includes private host shortcuts from
+        home.file.".ssh/config.d/.keep".text = "";
 
         home.packages = [ pkgs.skhd ];
 
